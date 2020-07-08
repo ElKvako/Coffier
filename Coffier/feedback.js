@@ -25,7 +25,6 @@ export default function (props) {
 		} else {
 			setStateOfBrewing(stateOfBrewing+1)
 		}
-		console.log(finished, stateOfBrewing, props.recipe.length-1)
 	}
 
 	function restart(){
