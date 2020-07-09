@@ -2,12 +2,11 @@ import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { ProgressBar, Colors } from 'react-native-paper';
 
-
-
 export default function (props) {
 
 	const [stateOfBrewing, setStateOfBrewing] = React.useState(0);
 	const [finished, setFinished] = React.useState(false);
+	const [progress, setProgress] = React.useState(0);
 
 	function getMessage(){
 		let message = props.recipe[stateOfBrewing].message
@@ -15,15 +14,15 @@ export default function (props) {
 			return message
 		} else {
 			return "Finished!"
-		}
-		
+		}	
 	}
 
 	function nextStep(){
-		if (stateOfBrewing === props.recipe.length-1) {
+		if (stateOfBrewing >= props.recipe.length-1) {
 			setFinished(true)
 		} else {
-			setStateOfBrewing(stateOfBrewing+1)
+		 setStateOfBrewing(stateOfBrewing+1)
+		 timerProgress()
 		}
 	}
 
@@ -31,7 +30,6 @@ export default function (props) {
 		setFinished(false)
 		setStateOfBrewing(0)
 	}
-
 
 	function controlButton(){
 		if (stateOfBrewing === 0 && !finished){
@@ -43,17 +41,31 @@ export default function (props) {
 		}
 	}
 
-	function progressBar(){
+    function timerProgress () {
+		let resultTime = props.recipe[stateOfBrewing].duration
+		let timer = 0
+		let done = 0
+		setProgress(0)
+		let id = setInterval(step, 50);
 		
-		return <ProgressBar progress={0.2} color={Colors.red800} />
+		function step() {
+			if (timer >= resultTime) {
+				clearInterval(id);
+				timer = 0;
+			} else {
+				timer = timer + 50;
+				done = timer/resultTime
+				setProgress(done)
+			}
+		}
 	}
-	
 
 	return(
 	<View style={styles.feedback}>
 		{controlButton()}
 		<Text>{getMessage()}</Text>
-		{ progressBar() }	
+		{/* timerProgress(props.recipe[stateOfBrewing].duration) */}
+      <ProgressBar progress={progress} color={Colors.red800} />
 	</View>
 	) 
 }
